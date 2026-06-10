@@ -1,0 +1,163 @@
+// === Color themes ===
+// Each theme has cognitive backing:
+//  - "focus":     blue (concentration) + sage (growth) — calm productivity
+//  - "energize":  terracotta (motivation/warmth) + mustard (optimism) — momentum
+//  - "delft":     delft-blue (heritage/trust) + warm orange (Dutch national accent)
+
+export const THEMES = {
+  focus: {
+    name: 'Calm Focus',
+    note: 'Blue for concentration · sage for growth',
+    vars: {
+      '--bg':              '#f3f5f8',
+      '--surface':         '#ffffff',
+      '--surface-sunken':  '#f7f9fc',
+      '--surface-hover':   '#eef2f7',
+      '--border':          '#e3e8ef',
+      '--border-strong':   '#c9d2dd',
+      '--ink':             '#1c2533',
+      '--ink-soft':        '#5a6678',
+      '--ink-faint':       '#8a94a4',
+      '--primary':         '#3a5a8c',
+      '--primary-hover':   '#2f4b78',
+      '--primary-ink':     '#2a4470',
+      '--primary-soft':    '#e4ecf7',
+      '--on-primary':      '#ffffff',
+      '--accent':          '#6b9580',
+      '--accent-ink':      '#3f6e58',
+      '--accent-soft':     '#e8f1ec',
+      '--accent-border':   '#c4dccf',
+      '--success':         '#5d9a7a',
+      '--warn':            '#c98a5e',
+      '--danger':          '#b25554',
+      '--danger-soft':     '#fbeaea',
+      '--backdrop':        'rgba(20, 30, 45, 0.4)',
+      '--shadow':          'rgba(30, 50, 80, 0.18)',
+      '--shadow-strong':   'rgba(20, 35, 55, 0.35)',
+
+      '--tag-bg':          '#eef2f7',
+      '--tag-ink':         '#5a6678',
+      '--tag-border':      '#dde3eb',
+      '--tag-grammar-bg':  '#e4ecf7',
+      '--tag-grammar-ink': '#2a4470',
+      '--tag-grammar-border': '#c8d6ea',
+      '--tag-vocab-bg':    '#e8f1ec',
+      '--tag-vocab-ink':   '#3f6e58',
+      '--tag-vocab-border':'#c4dccf',
+      '--tag-listening-bg':'#f3ecf6',
+      '--tag-listening-ink':'#6e4787',
+      '--tag-listening-border':'#dcc8e6',
+      '--tag-speaking-bg': '#faeee2',
+      '--tag-speaking-ink':'#8a5429',
+      '--tag-speaking-border':'#e9d0b2',
+    },
+  },
+
+  energize: {
+    name: 'Warm Momentum',
+    note: 'Terracotta for motivation · mustard for optimism',
+    vars: {
+      '--bg':              '#faf5ec',
+      '--surface':         '#fffbf3',
+      '--surface-sunken':  '#f5efe2',
+      '--surface-hover':   '#f0e9d8',
+      '--border':          '#e8dfc9',
+      '--border-strong':   '#cfc0a3',
+      '--ink':             '#2c1f12',
+      '--ink-soft':        '#6b5840',
+      '--ink-faint':       '#998769',
+      '--primary':         '#b85a3a',
+      '--primary-hover':   '#a04a2e',
+      '--primary-ink':     '#8c4226',
+      '--primary-soft':    '#f5e0d4',
+      '--on-primary':      '#fffbf3',
+      '--accent':          '#c9982f',
+      '--accent-ink':      '#7d5d18',
+      '--accent-soft':     '#f5e9c8',
+      '--accent-border':   '#e1cc8b',
+      '--success':         '#7c9558',
+      '--warn':            '#c47a2a',
+      '--danger':          '#a84431',
+      '--danger-soft':     '#f5d8d0',
+      '--backdrop':        'rgba(50, 30, 15, 0.4)',
+      '--shadow':          'rgba(90, 60, 30, 0.2)',
+      '--shadow-strong':   'rgba(60, 35, 15, 0.35)',
+
+      '--tag-bg':          '#f0e9d8',
+      '--tag-ink':         '#6b5840',
+      '--tag-border':      '#e0d5b8',
+      '--tag-grammar-bg':  '#f5e0d4',
+      '--tag-grammar-ink': '#8c4226',
+      '--tag-grammar-border': '#e8c5b0',
+      '--tag-vocab-bg':    '#e8edd3',
+      '--tag-vocab-ink':   '#566d33',
+      '--tag-vocab-border':'#cfdaa7',
+      '--tag-listening-bg':'#ecdfe9',
+      '--tag-listening-ink':'#75386b',
+      '--tag-listening-border':'#d5b8cd',
+      '--tag-speaking-bg': '#f5e9c8',
+      '--tag-speaking-ink':'#7d5d18',
+      '--tag-speaking-border':'#e1cc8b',
+    },
+  },
+
+  delft: {
+    name: 'Dutch Delft',
+    note: 'Delft blue for trust · Oranje for warmth',
+    vars: {
+      '--bg':              '#f6f3ec',
+      '--surface':         '#ffffff',
+      '--surface-sunken':  '#f1ede2',
+      '--surface-hover':   '#ebe6d8',
+      '--border':          '#e0dbcb',
+      '--border-strong':   '#c2bca7',
+      '--ink':             '#1a2233',
+      '--ink-soft':        '#5a6271',
+      '--ink-faint':       '#8a909e',
+      '--primary':         '#1d3557',
+      '--primary-hover':   '#152a48',
+      '--primary-ink':     '#152a48',
+      '--primary-soft':    '#dde4ee',
+      '--on-primary':      '#ffffff',
+      '--accent':          '#e07a3a',
+      '--accent-ink':      '#a65422',
+      '--accent-soft':     '#f8e3d2',
+      '--accent-border':   '#ecc9ad',
+      '--success':         '#3f8b6b',
+      '--warn':            '#cf8a36',
+      '--danger':          '#b14336',
+      '--danger-soft':     '#f5dad4',
+      '--backdrop':        'rgba(20, 28, 45, 0.42)',
+      '--shadow':          'rgba(20, 40, 70, 0.18)',
+      '--shadow-strong':   'rgba(15, 30, 55, 0.35)',
+
+      '--tag-bg':          '#ebe6d8',
+      '--tag-ink':         '#5a6271',
+      '--tag-border':      '#dad3bf',
+      '--tag-grammar-bg':  '#dde4ee',
+      '--tag-grammar-ink': '#152a48',
+      '--tag-grammar-border': '#bfcadd',
+      '--tag-vocab-bg':    '#e0ebde',
+      '--tag-vocab-ink':   '#2f6b4d',
+      '--tag-vocab-border':'#bcd3b9',
+      '--tag-listening-bg':'#ebdfeb',
+      '--tag-listening-ink':'#683969',
+      '--tag-listening-border':'#d2b8d2',
+      '--tag-speaking-bg': '#f8e3d2',
+      '--tag-speaking-ink':'#a65422',
+      '--tag-speaking-border':'#ecc9ad',
+    },
+  },
+};
+
+export function applyTheme(themeKey) {
+  const theme = THEMES[themeKey] || THEMES.focus;
+  let styleEl = document.getElementById('theme-vars');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'theme-vars';
+    document.head.appendChild(styleEl);
+  }
+  const lines = Object.entries(theme.vars).map(([k, v]) => `  ${k}: ${v};`).join('\n');
+  styleEl.textContent = `:root {\n${lines}\n}`;
+}
