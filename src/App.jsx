@@ -9,6 +9,7 @@ import { SettingsMenu } from './Settings.jsx';
 import { applyTheme } from './themes.js';
 import { SEED_STATE, emptyState } from './seed.js';
 import { migrate } from './shared/migrate.js';
+import { toExport } from './shared/merge.js';
 import {
   getToken, setToken, clearToken,
   fetchState, saveStateRemote,
@@ -329,6 +330,17 @@ export default function App() {
     }
   };
 
+  const exportData = () => {
+    const exp = toExport(state);
+    const blob = new Blob([JSON.stringify(exp, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `dutch-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // --- counts for sidebar ---
   const counts = React.useMemo(() => ({
     modules: state.modules.length,
@@ -449,6 +461,9 @@ export default function App() {
         onTheme={setTheme}
         onReset={resetToSeed}
         onClear={clearAll}
+        onExport={exportData}
+        currentState={state}
+        onApplyImport={(merged) => setState(merged)}
       />
     </div>
   );

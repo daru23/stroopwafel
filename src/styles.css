@@ -991,3 +991,30 @@ input.field, select.field {
   padding: 12px 0 4px;
 }
 .vocab-add .vocab-field { margin: 0; }
+
+/* Import / export */
+.settings-import-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin: 4px 6px 2px;
+  line-height: 1.4;
+}
+.import-preview {
+  padding: 8px 0 16px;
+}
+.import-preview-empty {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.import-preview-list {
+  margin: 0;
+  padding: 0 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.import-preview-list li {
+  font-size: 14px;
+  color: var(--ink);
+}
