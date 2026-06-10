@@ -1,0 +1,22 @@
+# Copy to group_vars/all.yml and fill in values.
+# Store tracker_api_token in Ansible Vault:
+#   ansible-vault encrypt_string 'YOUR_TOKEN' --name 'tracker_api_token'
+
+# Docker images (pushed to your registry in M7 / manually)
+tracker_web_image: ghcr.io/OWNER/dutch-tracker-web
+tracker_api_image: ghcr.io/OWNER/dutch-tracker-api
+tracker_tag: latest
+
+# Server settings
+tracker_host_port: 8080
+tracker_dir: /opt/dutch-tracker
+
+# Required — use vault in production
+tracker_api_token: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  ...
+
+# Optional: private registry login
+# tracker_registry: ghcr.io
+# tracker_registry_user: OWNER
+# tracker_registry_token: "{{ vault_ghcr_token }}"

@@ -1,0 +1,20 @@
+name: dutch-tracker
+
+services:
+  web:
+    image: {{ tracker_web_image }}:{{ tracker_tag }}
+    ports:
+      - "{{ tracker_host_port }}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    image: {{ tracker_api_image }}:{{ tracker_tag }}
+    env_file: .env
+    volumes:
+      - tracker-data:/data
+    restart: unless-stopped
+
+volumes:
+  tracker-data:

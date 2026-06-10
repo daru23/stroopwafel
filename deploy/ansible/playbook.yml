@@ -1,0 +1,60 @@
+---
+- name: Deploy Dutch Study Tracker
+  hosts: tracker
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Assert Docker is installed
+      ansible.builtin.command: docker --version
+      changed_when: false
+      register: docker_check
+      failed_when: docker_check.rc != 0
+
+    - name: Assert Docker Compose plugin is available
+      ansible.builtin.command: docker compose version
+      changed_when: false
+      register: compose_check
+      failed_when: compose_check.rc != 0
+
+    - name: Create deployment directory
+      ansible.builtin.file:
+        path: "{{ tracker_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Log in to container registry
+      community.docker.docker_login:
+        registry_url: "{{ tracker_registry | default('ghcr.io') }}"
+        username: "{{ tracker_registry_user }}"
+        password: "{{ tracker_registry_token }}"
+      when: tracker_registry_user is defined
+      no_log: true
+
+    - name: Template docker-compose.yml
+      ansible.builtin.template:
+        src: templates/compose.yml.j2
+        dest: "{{ tracker_dir }}/docker-compose.yml"
+        mode: "0644"
+
+    - name: Template .env (mode 0600 — contains secret token)
+      ansible.builtin.template:
+        src: templates/env.j2
+        dest: "{{ tracker_dir }}/.env"
+        mode: "0600"
+      no_log: true
+
+    - name: Pull latest images and start services
+      community.docker.docker_compose_v2:
+        project_src: "{{ tracker_dir }}"
+        pull: always
+        state: present
+
+    - name: Wait for health endpoint
+      ansible.builtin.uri:
+        url: "http://localhost:{{ tracker_host_port }}/api/health"
+        status_code: 200
+      register: health
+      until: health.status == 200
+      retries: 10
+      delay: 3
