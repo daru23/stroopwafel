@@ -7,6 +7,7 @@ export const SEED_MODULES = [
     notes: '• Form: hebben/zijn (aux) + past participle\n• Past participle: ge- + stem + -t/-d (weak verbs)\n• "Zijn" with motion / change-of-state verbs: gaan, komen, beginnen, blijven\n• Example: Ik heb gewerkt · Ik ben gegaan',
     createdAt: '2026-05-12T10:00:00Z',
     lastReviewed: '2026-06-07T14:30:00Z',
+    vocab: [],
     quizzes: [
       { id: 'q-perf-1', score: 6, total: 10, date: '2026-05-15T18:00:00Z', note: 'Confused werken/gewerkt' },
       { id: 'q-perf-2', score: 7, total: 10, date: '2026-05-22T19:10:00Z', note: '' },
@@ -20,6 +21,7 @@ export const SEED_MODULES = [
     notes: '• Weak verbs: stem + -te(n) / -de(n)\n• "t kofschip" rule decides -te vs -de\n• Strong verbs: vowel change (lopen → liep)\n• Used in storytelling & written narration',
     createdAt: '2026-05-18T10:00:00Z',
     lastReviewed: '2026-06-01T20:00:00Z',
+    vocab: [],
     quizzes: [
       { id: 'q-imp-1', score: 5, total: 10, date: '2026-05-25T20:00:00Z', note: 'Strong verbs are hard' },
       { id: 'q-imp-2', score: 7, total: 10, date: '2026-06-01T20:00:00Z', note: '' },
@@ -32,6 +34,7 @@ export const SEED_MODULES = [
     notes: '• "Er" as placeholder subject ("Er is een…")\n• "Er" with quantities: er zijn er drie\n• Hier/Daar + preposition: hierop, daarover\n• Practice in everyday phrases',
     createdAt: '2026-05-28T10:00:00Z',
     lastReviewed: '2026-05-30T15:00:00Z',
+    vocab: [],
     quizzes: [
       { id: 'q-erhd-1', score: 4, total: 10, date: '2026-05-30T15:00:00Z', note: 'Still tricky' },
     ],
@@ -43,6 +46,7 @@ export const SEED_MODULES = [
     notes: '• Modal + infinitive at sentence end\n• "Ik wil graag een koffie" — wens\n• "Je moet hier wachten" — verplichting\n• Watch for "mogen" → permission vs "kunnen" → ability',
     createdAt: '2026-06-02T10:00:00Z',
     lastReviewed: '2026-06-08T20:00:00Z',
+    vocab: [],
     quizzes: [
       { id: 'q-mod-1', score: 9, total: 10, date: '2026-06-08T20:00:00Z', note: 'Felt confident' },
     ],
@@ -54,17 +58,18 @@ export const SEED_MODULES = [
     notes: '• Verb goes to the end in subordinate clauses\n• Triggers: omdat, dat, als, wanneer, terwijl, hoewel\n• "Ik blijf thuis omdat het regent."\n• Multi-verb stacks at end (hoofdwerkwoord laatst of voorlaatst)',
     createdAt: '2026-06-04T10:00:00Z',
     lastReviewed: null,
+    vocab: [],
     quizzes: [],
   },
 ];
 
 export const SEED_STATE = {
-  version: 1,
+  version: 2,
   themeKey: 'focus',
-  dailyGoal: 1,           // lessons/quizzes per day
-  weeklyGoalDays: 5,      // days/week
+  dailyGoal: 1,
+  weeklyGoalDays: 5,
   streak: 4,
-  weekDots: [true, true, false, true, true, true, false], // Mon..Sun
+  weekDots: [true, true, false, true, true, true, false],
   modules: SEED_MODULES,
   generalQuizzes: [
     { id: 'gq-1', moduleIds: ['m-perfectum', 'm-imperfectum'], score: 12, total: 15, date: '2026-06-05T19:00:00Z', note: 'Mixed tenses drill' },
@@ -74,7 +79,7 @@ export const SEED_STATE = {
 
 export function emptyState(themeKey = 'focus') {
   return {
-    version: 1, themeKey,
+    version: 2, themeKey,
     dailyGoal: 1, weeklyGoalDays: 5,
     streak: 0,
     weekDots: [false, false, false, false, false, false, false],

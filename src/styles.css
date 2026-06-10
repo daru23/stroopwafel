@@ -782,3 +782,139 @@ input.field, select.field {
   margin-top: 2px;
 }
 .welcome b { color: var(--ink); font-weight: 600; }
+
+/* Loading screen */
+.app-loading {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+.app-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Token gate overlay */
+.token-gate {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: grid;
+  place-items: center;
+  z-index: 200;
+  backdrop-filter: blur(3px);
+}
+.token-gate-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px 28px;
+  width: min(420px, 92vw);
+  box-shadow: 0 24px 64px -16px var(--shadow-strong);
+}
+.token-gate-box h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.token-gate-box p {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+}
+.token-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  font-family: monospace;
+  box-sizing: border-box;
+  margin-bottom: 4px;
+  transition: border-color 0.12s ease;
+}
+.token-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.token-error {
+  font-size: 12.5px;
+  color: var(--danger);
+  margin: 6px 0 10px;
+}
+.token-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* Offline banner */
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  padding: 7px 12px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.offline-connect {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+.offline-connect:hover { background: rgba(255,255,255,0.3); }
+
+/* Toast notification */
+.app-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 13.5px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px -8px var(--shadow-strong);
+  z-index: 300;
+  animation: pop 0.15s ease;
+  white-space: nowrap;
+}
+.app-toast button {
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.app-toast button:hover { opacity: 1; }
