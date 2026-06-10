@@ -918,3 +918,76 @@ input.field, select.field {
   line-height: 1;
 }
 .app-toast button:hover { opacity: 1; }
+
+/* Vocabulary section */
+.vocab-card { margin-top: 20px; }
+.vocab-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.vocab-header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.vocab-list {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.vocab-row {
+  display: grid;
+  grid-template-columns: 160px 160px 1fr 36px;
+  gap: 0;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.vocab-row:last-child { border-bottom: none; }
+.vocab-row.vocab-head {
+  background: var(--surface-hover);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-faint);
+}
+.vocab-row.clickable { cursor: pointer; }
+.vocab-row.clickable:hover { background: var(--surface-hover); }
+.vocab-row.editing { background: var(--primary-soft); }
+.vocab-row > span, .vocab-row > input, .vocab-row > div {
+  padding: 9px 12px;
+  min-width: 0;
+}
+.vocab-nl { font-weight: 500; color: var(--ink); }
+.vocab-en { color: var(--ink-soft); font-size: 13.5px; }
+.vocab-ex { color: var(--ink-soft); font-size: 12.5px; font-style: italic; }
+.vocab-empty { color: var(--ink-faint); font-style: normal; }
+.vocab-del {
+  opacity: 0;
+  font-size: 15px;
+  padding: 0 10px !important;
+  height: 100%;
+  border-radius: 0;
+}
+.vocab-row.clickable:hover .vocab-del { opacity: 0.5; }
+.vocab-del:hover { opacity: 1 !important; }
+.vocab-field {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13.5px;
+  color: var(--ink);
+  box-sizing: border-box;
+}
+.vocab-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+.vocab-field-ex { font-style: italic; }
+.vocab-edit-actions { display: flex; gap: 4px; padding: 6px 8px !important; }
+.vocab-add {
+  display: grid;
+  grid-template-columns: 160px 160px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 0 4px;
+}
+.vocab-add .vocab-field { margin: 0; }

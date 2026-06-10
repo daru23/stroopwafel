@@ -57,6 +57,12 @@ function ModuleCard({ module, onOpen }) {
         <div className="module-name">{module.name}</div>
         <div className="module-meta">
           <span>{module.quizzes.length} quiz{module.quizzes.length === 1 ? '' : 'zes'}</span>
+          {(module.vocab || []).length > 0 && (
+            <>
+              <span>·</span>
+              <span>{module.vocab.length} word{module.vocab.length === 1 ? '' : 's'}</span>
+            </>
+          )}
           <span>·</span>
           <span>Last: {relTime(module.lastReviewed)}</span>
         </div>

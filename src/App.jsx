@@ -289,6 +289,33 @@ export default function App() {
     setState((s) => ({ ...s, generalQuizzes: s.generalQuizzes.filter((q) => q.id !== id) }));
   };
 
+  const addVocab = (moduleId, entry) => {
+    setState((s) => ({
+      ...s,
+      modules: s.modules.map((m) => m.id === moduleId
+        ? { ...m, vocab: [...(m.vocab || []), { id: uid('v'), ...entry }] }
+        : m),
+    }));
+  };
+
+  const updateVocab = (moduleId, vocabId, patch) => {
+    setState((s) => ({
+      ...s,
+      modules: s.modules.map((m) => m.id === moduleId
+        ? { ...m, vocab: (m.vocab || []).map((v) => v.id === vocabId ? { ...v, ...patch } : v) }
+        : m),
+    }));
+  };
+
+  const deleteVocab = (moduleId, vocabId) => {
+    setState((s) => ({
+      ...s,
+      modules: s.modules.map((m) => m.id === moduleId
+        ? { ...m, vocab: (m.vocab || []).filter((v) => v.id !== vocabId) }
+        : m),
+    }));
+  };
+
   const resetToSeed = () => {
     if (confirm('Reset all data to the demo seed? This will erase your progress.')) {
       setState(SEED_STATE);
@@ -378,6 +405,9 @@ export default function App() {
             onDeleteQuiz={(qid) => deleteQuiz(currentModule.id, qid)}
             onEdit={() => { setEditorInitial(currentModule); setEditorOpen(true); }}
             onDelete={() => deleteModule(currentModule.id)}
+            onAddVocab={(entry) => addVocab(currentModule.id, entry)}
+            onUpdateVocab={(vid, patch) => updateVocab(currentModule.id, vid, patch)}
+            onDeleteVocab={(vid) => deleteVocab(currentModule.id, vid)}
           />
         )}
 

@@ -1,8 +1,8 @@
-// === Single module detail view: notes, quiz history, SRS hint ===
+// === Single module detail view: notes, quiz history, SRS hint, vocabulary ===
 import React from 'react';
 import { avgScore, isDue, srsInterval, daysSince, fmtDate, relTime, Tag, Modal, Empty } from './components.jsx';
 
-export function ModuleDetail({ module, onBack, onUpdate, onAddQuiz, onDeleteQuiz, onEdit, onDelete }) {
+export function ModuleDetail({ module, onBack, onUpdate, onAddQuiz, onDeleteQuiz, onEdit, onDelete, onAddVocab, onUpdateVocab, onDeleteVocab }) {
   const avg = avgScore(module.quizzes);
   const due = isDue(module);
   const interval = srsInterval(avg);
@@ -64,7 +64,7 @@ export function ModuleDetail({ module, onBack, onUpdate, onAddQuiz, onDeleteQuiz
           </div>
 
           {module.quizzes.length === 0
-            ? <Empty title="No quizzes yet" hint="Tap “Log a score” after a self-test, textbook check, or class quiz." />
+            ? <Empty title="No quizzes yet" hint={'Tap “Log a score” after a self-test, textbook check, or class quiz.'} />
             : (
               <div className="history-list">
                 {[...module.quizzes].reverse().map((q) => {
@@ -103,6 +103,13 @@ export function ModuleDetail({ module, onBack, onUpdate, onAddQuiz, onDeleteQuiz
         </div>
       </div>
 
+      <VocabSection
+        vocab={module.vocab || []}
+        onAdd={onAddVocab}
+        onUpdate={onUpdateVocab}
+        onDelete={onDeleteVocab}
+      />
+
       {logOpen && (
         <LogScoreModal
           onClose={() => setLogOpen(false)}
@@ -119,6 +126,142 @@ export function ModuleDetail({ module, onBack, onUpdate, onAddQuiz, onDeleteQuiz
             </button>
           </div>
         </Modal>
+      )}
+    </div>
+  );
+}
+
+// --- Vocabulary section ---
+function VocabSection({ vocab, onAdd, onUpdate, onDelete }) {
+  const [hideEn, setHideEn] = React.useState(false);
+  const [editId, setEditId] = React.useState(null);
+  const [editBuf, setEditBuf] = React.useState({ nl: '', en: '', example: '' });
+  const [addOpen, setAddOpen] = React.useState(false);
+  const [addBuf, setAddBuf] = React.useState({ nl: '', en: '', example: '' });
+
+  function startEdit(v) {
+    setEditId(v.id);
+    setEditBuf({ nl: v.nl, en: v.en || '', example: v.example || '' });
+  }
+
+  function saveEdit() {
+    if (!editBuf.nl.trim()) return;
+    onUpdate(editId, { nl: editBuf.nl.trim(), en: editBuf.en.trim(), example: editBuf.example.trim() });
+    setEditId(null);
+  }
+
+  function submitAdd(e) {
+    e?.preventDefault();
+    if (!addBuf.nl.trim()) return;
+    onAdd({ nl: addBuf.nl.trim(), en: addBuf.en.trim(), example: addBuf.example.trim() });
+    setAddBuf({ nl: '', en: '', example: '' });
+  }
+
+  return (
+    <div className="card vocab-card">
+      <div className="vocab-header">
+        <div>
+          <h3>Vocabulary</h3>
+          <div className="card-sub">{vocab.length} word{vocab.length === 1 ? '' : 's'}</div>
+        </div>
+        <div className="vocab-header-actions">
+          {vocab.length > 0 && (
+            <button className="btn btn-sm btn-ghost" onClick={() => setHideEn((x) => !x)}>
+              {hideEn ? 'Show translations' : 'Hide translations'}
+            </button>
+          )}
+          <button className="btn btn-sm btn-secondary" onClick={() => setAddOpen((x) => !x)}>
+            {addOpen ? 'Cancel' : '+ Add word'}
+          </button>
+        </div>
+      </div>
+
+      {vocab.length === 0 && !addOpen && (
+        <Empty
+          title="No vocabulary yet"
+          hint="Add words below, or import a JSON file via Settings."
+          action={<button className="btn btn-secondary btn-sm" onClick={() => setAddOpen(true)}>+ Add word</button>}
+        />
+      )}
+
+      {vocab.length > 0 && (
+        <div className="vocab-list">
+          <div className="vocab-row vocab-head">
+            <span className="vocab-nl">Dutch</span>
+            {!hideEn && <span className="vocab-en">English</span>}
+            <span className="vocab-ex">Example</span>
+            <span />
+          </div>
+          {vocab.map((v) => (
+            editId === v.id
+              ? (
+                <div key={v.id} className="vocab-row editing">
+                  <input
+                    className="vocab-field"
+                    value={editBuf.nl}
+                    onChange={(e) => setEditBuf((b) => ({ ...b, nl: e.target.value }))}
+                    placeholder="Dutch *"
+                    autoFocus
+                  />
+                  {!hideEn && (
+                    <input
+                      className="vocab-field"
+                      value={editBuf.en}
+                      onChange={(e) => setEditBuf((b) => ({ ...b, en: e.target.value }))}
+                      placeholder="English"
+                    />
+                  )}
+                  <input
+                    className="vocab-field vocab-field-ex"
+                    value={editBuf.example}
+                    onChange={(e) => setEditBuf((b) => ({ ...b, example: e.target.value }))}
+                    placeholder="Example sentence…"
+                  />
+                  <div className="vocab-edit-actions">
+                    <button className="btn btn-sm btn-primary" onClick={saveEdit} disabled={!editBuf.nl.trim()}>✓</button>
+                    <button className="btn btn-sm btn-ghost" onClick={() => setEditId(null)}>✕</button>
+                  </div>
+                </div>
+              )
+              : (
+                <div key={v.id} className="vocab-row clickable" onClick={() => startEdit(v)}>
+                  <span className="vocab-nl">{v.nl}</span>
+                  {!hideEn && <span className="vocab-en">{v.en || <span className="vocab-empty">—</span>}</span>}
+                  <span className="vocab-ex">{v.example || <span className="vocab-empty">—</span>}</span>
+                  <button
+                    className="btn btn-ghost btn-sm vocab-del"
+                    onClick={(e) => { e.stopPropagation(); onDelete(v.id); }}
+                    title="Delete"
+                  >×</button>
+                </div>
+              )
+          ))}
+        </div>
+      )}
+
+      {addOpen && (
+        <form className="vocab-add" onSubmit={submitAdd}>
+          <input
+            className="vocab-field"
+            value={addBuf.nl}
+            onChange={(e) => setAddBuf((b) => ({ ...b, nl: e.target.value }))}
+            placeholder="Dutch word/phrase *"
+            autoFocus
+          />
+          <input
+            className="vocab-field"
+            value={addBuf.en}
+            onChange={(e) => setAddBuf((b) => ({ ...b, en: e.target.value }))}
+            placeholder="English translation"
+          />
+          <input
+            className="vocab-field vocab-field-ex"
+            value={addBuf.example}
+            onChange={(e) => setAddBuf((b) => ({ ...b, example: e.target.value }))}
+            placeholder="Example sentence"
+          />
+          <button type="submit" className="btn btn-primary btn-sm" disabled={!addBuf.nl.trim()}>Add</button>
+        </form>
       )}
     </div>
   );
