@@ -1,6 +1,26 @@
+name: dutch-tracker
+
 services:
-  app:
-    build: .
+  web:
+    build:
+      context: .
+      target: web
     ports:
-      - "8080:80"
+      - "${HOST_PORT:-8080}:80"
+    depends_on:
+      - api
     restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      target: api
+    environment:
+      API_TOKEN: ${API_TOKEN:?API_TOKEN is required}
+      DB_PATH: /data/tracker.db
+    volumes:
+      - tracker-data:/data
+    restart: unless-stopped
+
+volumes:
+  tracker-data:
