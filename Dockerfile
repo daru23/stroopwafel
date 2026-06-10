@@ -21,7 +21,8 @@ COPY server/package.json server/package-lock.json ./
 RUN npm ci --omit=dev
 COPY server/ .
 COPY src/shared/ ../src/shared/
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S app && adduser -S app -G app \
+    && mkdir -p /data && chown app:app /data
 USER app
 VOLUME /data
 EXPOSE 3000
