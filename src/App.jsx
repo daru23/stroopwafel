@@ -226,6 +226,19 @@ export default function App() {
     setShowTokenGate(false);
   }
 
+  // --- counts for sidebar (must run before any early return — Rules of Hooks) ---
+  const counts = React.useMemo(() => {
+    if (!state) return { modules: 0, generalQuizzes: 0, tags: {} };
+    return {
+      modules: state.modules.length,
+      generalQuizzes: state.generalQuizzes.length,
+      tags: TAG_KINDS.reduce((acc, t) => {
+        acc[t] = state.modules.filter((m) => m.tags.includes(t)).length;
+        return acc;
+      }, {}),
+    };
+  }, [state]);
+
   // Loading screen
   if (state === null) {
     return <div className="app-loading"><div className="app-loading-spinner" /></div>;
@@ -340,16 +353,6 @@ export default function App() {
     a.click();
     URL.revokeObjectURL(url);
   };
-
-  // --- counts for sidebar ---
-  const counts = React.useMemo(() => ({
-    modules: state.modules.length,
-    generalQuizzes: state.generalQuizzes.length,
-    tags: TAG_KINDS.reduce((acc, t) => {
-      acc[t] = state.modules.filter((m) => m.tags.includes(t)).length;
-      return acc;
-    }, {}),
-  }), [state]);
 
   // --- routing helpers ---
   const openModule = (id) => setView(`module:${id}`);
