@@ -35,6 +35,13 @@ export function Flashcards({ stats, onResult, onResetStats }) {
     return t ? t.cards.map((c) => ({ ...c, themeId: t.id, themeName: t.name })) : [];
   }, [mode, themeId]);
 
+  // All hooks must run on every render — keep them above the early returns.
+  const totalStats = React.useMemo(() => {
+    let seen = 0, got = 0;
+    for (const s of Object.values(stats)) { seen += s.seen; got += s.got; }
+    return { seen, got, pct: seen ? Math.round((got / seen) * 100) : null };
+  }, [stats]);
+
   const totalCards = sourceCards.length;
 
   const requestedSize = (() => {
@@ -88,12 +95,6 @@ export function Flashcards({ stats, onResult, onResetStats }) {
   }
 
   // --- Setup ---
-  const totalStats = React.useMemo(() => {
-    let seen = 0, got = 0;
-    for (const s of Object.values(stats)) { seen += s.seen; got += s.got; }
-    return { seen, got, pct: seen ? Math.round((got / seen) * 100) : null };
-  }, [stats]);
-
   return (
     <div>
       <div className="page-head">
