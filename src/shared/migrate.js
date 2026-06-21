@@ -1,5 +1,5 @@
 // State document migrations. Shared by the frontend and the API server.
-export const CURRENT_VERSION = 2;
+export const CURRENT_VERSION = 3;
 
 export function migrate(doc) {
   if (!doc || typeof doc !== 'object') return doc;
@@ -8,6 +8,13 @@ export function migrate(doc) {
       ...doc,
       version: 2,
       modules: (doc.modules || []).map((m) => ({ ...m, vocab: m.vocab ?? [] })),
+    };
+  }
+  if (doc.version === 2) {
+    doc = {
+      ...doc,
+      version: 3,
+      flashcardStats: doc.flashcardStats ?? {},
     };
   }
   return doc;
@@ -21,5 +28,6 @@ export function emptyDoc(themeKey = 'focus') {
     weekDots: [false, false, false, false, false, false, false],
     modules: [],
     generalQuizzes: [],
+    flashcardStats: {},
   };
 }

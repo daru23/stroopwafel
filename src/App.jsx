@@ -5,6 +5,7 @@ import { Dashboard } from './Dashboard.jsx';
 import { ModulesView, ModuleEditor } from './ModulesView.jsx';
 import { ModuleDetail } from './ModuleDetail.jsx';
 import { QuizView } from './QuizView.jsx';
+import { Flashcards } from './Flashcards.jsx';
 import { SettingsMenu } from './Settings.jsx';
 import { applyTheme } from './themes.js';
 import { SEED_STATE, emptyState } from './seed.js';
@@ -330,6 +331,30 @@ export default function App() {
     }));
   };
 
+  const recordFlashcardResult = (cardId, got) => {
+    setState((s) => {
+      const prev = s.flashcardStats?.[cardId] || { seen: 0, got: 0, missed: 0, lastSeen: null };
+      return {
+        ...s,
+        flashcardStats: {
+          ...(s.flashcardStats || {}),
+          [cardId]: {
+            seen: prev.seen + 1,
+            got: prev.got + (got ? 1 : 0),
+            missed: prev.missed + (got ? 0 : 1),
+            lastSeen: new Date().toISOString(),
+          },
+        },
+      };
+    });
+  };
+
+  const resetFlashcardStats = () => {
+    if (confirm('Reset all flashcard stats? This clears your per-card history.')) {
+      setState((s) => ({ ...s, flashcardStats: {} }));
+    }
+  };
+
   const resetToSeed = () => {
     if (confirm('Reset all data to the demo seed? This will erase your progress.')) {
       setState(SEED_STATE);
@@ -439,6 +464,14 @@ export default function App() {
             onLogQuiz={addGeneralQuiz}
             onDeleteQuiz={deleteGeneralQuiz}
             onOpenModule={openModule}
+          />
+        )}
+
+        {view === 'flashcards' && (
+          <Flashcards
+            stats={state.flashcardStats || {}}
+            onResult={recordFlashcardResult}
+            onResetStats={resetFlashcardStats}
           />
         )}
       </main>

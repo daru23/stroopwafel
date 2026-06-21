@@ -26,6 +26,9 @@ export function Sidebar({ view, onNav, counts, streak, weekDots }) {
           <span style={{ width: 16, display: 'inline-block' }}>◇</span> General quizzes
           <span className="nav-count">{counts.generalQuizzes}</span>
         </button>
+        <button className={classnames('nav-item', view === 'flashcards' && 'active')} onClick={() => onNav('flashcards')}>
+          <span style={{ width: 16, display: 'inline-block' }}>♠</span> Flashcards
+        </button>
 
         <div className="nav-section-label">Filter by tag</div>
         {TAG_KINDS.map((t) => (
