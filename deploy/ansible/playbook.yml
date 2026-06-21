@@ -1,7 +1,10 @@
 ---
 - name: Deploy Dutch Study Tracker
   hosts: tracker
-  become: true
+  # become: true is not needed — the deploy user owns tracker_dir and is in the
+  # docker group, so dir creation, file writes, and `docker compose` all work
+  # unprivileged. Set `become: true` only if you point tracker_dir at a path
+  # the SSH user doesn't own (e.g. /opt/...).
   gather_facts: false
 
   tasks:
@@ -50,11 +53,35 @@
         pull: always
         state: present
 
-    - name: Wait for health endpoint
+    - name: Wait for health endpoint (via loopback)
       ansible.builtin.uri:
-        url: "http://localhost:{{ tracker_host_port }}/api/health"
+        url: "http://127.0.0.1:{{ tracker_host_port }}/api/health"
         status_code: 200
       register: health
       until: health.status == 200
       retries: 10
       delay: 3
+
+    # --- Host Caddy reverse proxy (subdomain → container) ---
+    - name: Add stroopwafel vhost to host Caddyfile
+      ansible.builtin.blockinfile:
+        path: /etc/caddy/Caddyfile
+        marker: "# {mark} ANSIBLE MANAGED: dutch-tracker"
+        block: |
+          {{ tracker_domain }} {
+              reverse_proxy 127.0.0.1:{{ tracker_host_port }}
+          }
+      become: true
+      register: caddy_block
+
+    - name: Validate Caddyfile
+      ansible.builtin.command: caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+      changed_when: false
+      when: caddy_block.changed
+
+    - name: Reload host Caddy
+      ansible.builtin.systemd:
+        name: caddy
+        state: reloaded
+      become: true
+      when: caddy_block.changed

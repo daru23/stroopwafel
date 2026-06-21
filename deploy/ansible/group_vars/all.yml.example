@@ -11,10 +11,9 @@ tracker_tag: latest
 tracker_host_port: 8080
 tracker_dir: /opt/dutch-tracker
 
-# Required — use vault in production
-tracker_api_token: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  ...
+# Required — encrypt with: ansible-vault encrypt_string 'YOUR_TOKEN' --name 'tracker_api_token'
+# then paste the resulting block in place of the next line.
+tracker_api_token: "REPLACE_ME_WITH_VAULT_ENCRYPTED_STRING"
 
 # Optional: private registry login
 # tracker_registry: ghcr.io

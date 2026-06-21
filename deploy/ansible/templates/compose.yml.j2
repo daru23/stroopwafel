@@ -4,7 +4,9 @@ services:
   web:
     image: {{ tracker_web_image }}:{{ tracker_tag }}
     ports:
-      - "{{ tracker_host_port }}:80"
+      # Bind to loopback only — host Caddy reverse-proxies stroopwafel.<domain>
+      # to this port. Prevents direct external access on the raw port.
+      - "127.0.0.1:{{ tracker_host_port }}:80"
     depends_on:
       - api
     restart: unless-stopped
