@@ -92,6 +92,15 @@ Click any module card to open it:
 
 For drills that span multiple topics: pick modules, log one score for the whole set. History shows which modules each quiz covered.
 
+### Flashcards
+
+Practice vocabulary Dutch → English. Two modes:
+
+- **By theme** — pick a single chapter and study it
+- **All themes** — shuffle everything together
+
+For each mode, choose a subset size with the chips (`10 / 20 / 50 / All`) or a custom number. In the session, click the card or press **Space** to flip; then **Got it** (`1`) or **Didn't know** (`2`). At the end you see your percentage and a list of missed cards. Per-card stats sync across browsers along with the rest of your state.
+
 ### Spaced repetition
 
 Review intervals adapt to your average score per module:
@@ -131,6 +140,27 @@ Quick example — bulk-add vocabulary to an existing module:
 }
 ```
 
+## Adding more flashcard themes
+
+Flashcards are static data in [src/flashcards/themes.js](src/flashcards/themes.js). To add a new theme, append an object to the `THEMES` array:
+
+```js
+{
+  id: 't8',
+  name: 'Werk',
+  label: 'Theme 8 · Werk (Work)',
+  cards: [
+    { nl: 'baan', article: 'de', en: 'job' },
+    { nl: 'sollicitatie', article: 'de', en: 'job application' },
+    // …
+  ],
+}
+```
+
+Card ids are auto-generated from theme + Dutch slug (`t8:baan`), so adding cards to an existing theme keeps your progress on the unchanged ones. Each card supports `nl` (required), `en` (required), and optional `article` (`de` / `het`) and `example`.
+
+Then rebuild the web image and re-deploy — see [deploy/README.md](deploy/README.md#re-deploy-after-image-update).
+
 ## Sync across browsers
 
 The app talks to the API with a shared-secret token (`API_TOKEN`). Enter the token once in the **Sync token** gate; it's stored in `localStorage`. Changes sync automatically (debounced 800 ms). On conflict (two tabs editing simultaneously), the server's version wins and a toast notifies you. When the server is unreachable, an **Offline** banner appears and changes are saved locally until the next successful sync.
@@ -143,22 +173,40 @@ See [deploy/README.md](deploy/README.md) for the full Ansible setup. The playboo
 
 On a `v*` tag or manual dispatch, the [build workflow](.github/workflows/build.yml) builds both images and pushes them to GHCR under `ghcr.io/OWNER/dutch-tracker-{web,api}`.
 
-To push manually:
+### Push manually (from a Mac to an x86_64 server)
+
+Requires a GitHub PAT with `write:packages` ([create one](https://github.com/settings/tokens/new?scopes=write:packages,read:packages)) and one-time `docker login`:
 
 ```bash
-docker build --target web -t ghcr.io/OWNER/dutch-tracker-web:v1.0.0 .
-docker build --target api -t ghcr.io/OWNER/dutch-tracker-api:v1.0.0 .
-docker push ghcr.io/OWNER/dutch-tracker-web:v1.0.0
-docker push ghcr.io/OWNER/dutch-tracker-api:v1.0.0
+echo 'YOUR_PAT' | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+
+# Use buildx + --platform when your Mac is arm64 but the server is x86_64
+docker buildx build --platform linux/amd64 --target web \
+  -t ghcr.io/YOUR_GITHUB_USERNAME/dutch-tracker-web:latest --push .
+docker buildx build --platform linux/amd64 --target api \
+  -t ghcr.io/YOUR_GITHUB_USERNAME/dutch-tracker-api:latest --push .
 ```
+
+If GHCR packages are private, make them public after the first push (see [deploy/README.md](deploy/README.md#building-images)) or configure the server to log in.
 
 ## Data storage
 
 | Storage | Key | Purpose |
 |---|---|---|
-| Server SQLite | `/data/tracker.db` | Source of truth, synced across browsers |
-| Browser localStorage | `dutch-tracker-v2` | Offline cache, survives page reload |
+| Server SQLite | `/data/tracker.db` | Source of truth, synced across browsers. State document version 3 (modules, generalQuizzes, vocab per module, flashcardStats per card) |
+| Browser localStorage | `dutch-tracker-v2` | Offline cache, survives page reload. Migrated to current doc version on load |
 | Browser localStorage | `dutch-tracker-token` | API token (not sent to any third party) |
+
+### Backups
+
+The server-side SQLite file lives in the Docker named volume `dutch-tracker_tracker-data`. You can either snapshot the volume directly or use the `/api/export` endpoint:
+
+```bash
+curl -s -H "Authorization: Bearer YOUR_TOKEN" \
+  https://YOUR_DOMAIN/api/export > tracker-$(date +%F).json
+```
+
+Restore by importing the JSON in **⚙ Settings → Import JSON** or `POST`ing it to `/api/import`. See [deploy/README.md](deploy/README.md#backups) for volume-level snapshot/restore commands.
 
 ## Known limitations
 
