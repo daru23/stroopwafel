@@ -4,7 +4,7 @@ import { Sidebar } from './Sidebar.jsx';
 import { Dashboard } from './Dashboard.jsx';
 import { ModulesView, ModuleEditor } from './ModulesView.jsx';
 import { ModuleDetail } from './ModuleDetail.jsx';
-import { QuizView } from './QuizView.jsx';
+import { Quiz } from './Quiz.jsx';
 import { Flashcards } from './Flashcards.jsx';
 import { SettingsMenu } from './Settings.jsx';
 import { BottomNav } from './BottomNav.jsx';
@@ -295,15 +295,28 @@ export default function App() {
     setView('modules');
   };
 
-  const addGeneralQuiz = (quiz) => {
-    setState((s) => ({
-      ...s,
-      generalQuizzes: [...s.generalQuizzes, { id: uid('gq'), ...quiz }],
-    }));
+  const recordQuizResult = (cardId, correct) => {
+    setState((s) => {
+      const prev = s.quizStats?.[cardId] || { seen: 0, correct: 0, wrong: 0, lastSeen: null };
+      return {
+        ...s,
+        quizStats: {
+          ...(s.quizStats || {}),
+          [cardId]: {
+            seen: prev.seen + 1,
+            correct: prev.correct + (correct ? 1 : 0),
+            wrong: prev.wrong + (correct ? 0 : 1),
+            lastSeen: new Date().toISOString(),
+          },
+        },
+      };
+    });
   };
 
-  const deleteGeneralQuiz = (id) => {
-    setState((s) => ({ ...s, generalQuizzes: s.generalQuizzes.filter((q) => q.id !== id) }));
+  const resetQuizStats = () => {
+    if (confirm('Reset all quiz stats? This clears your per-word history.')) {
+      setState((s) => ({ ...s, quizStats: {} }));
+    }
   };
 
   const addVocab = (moduleId, entry) => {
@@ -461,11 +474,10 @@ export default function App() {
         )}
 
         {view === 'quiz' && (
-          <QuizView
-            state={state}
-            onLogQuiz={addGeneralQuiz}
-            onDeleteQuiz={deleteGeneralQuiz}
-            onOpenModule={openModule}
+          <Quiz
+            stats={state.quizStats || {}}
+            onResult={recordQuizResult}
+            onResetStats={resetQuizStats}
           />
         )}
 

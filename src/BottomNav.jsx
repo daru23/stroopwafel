@@ -26,7 +26,7 @@ export function BottomNav({ view, onNav, settingsOpen, onToggleSettings }) {
         onClick={() => onNav('quiz')}
       >
         <span className="bn-icon">◇</span>
-        <span className="bn-label">Quizzes</span>
+        <span className="bn-label">Quiz</span>
       </button>
       <button
         className={classnames('bn-item', view === 'flashcards' && !settingsOpen && 'active')}

@@ -35,7 +35,7 @@ export function Dashboard({ state, onNav, onOpenModule, onOpenQuiz }) {
         </div>
         <div className="page-actions">
           <button className="btn btn-secondary" onClick={() => onOpenQuiz()}>
-            ◇ Start a general quiz
+            ◇ Take a quiz
           </button>
           <button className="btn btn-primary" onClick={() => onNav('modules')}>
             Go to modules →

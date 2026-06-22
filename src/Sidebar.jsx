@@ -23,8 +23,7 @@ export function Sidebar({ view, onNav, counts, streak, weekDots }) {
           <span className="nav-count">{counts.modules}</span>
         </button>
         <button className={classnames('nav-item', view === 'quiz' && 'active')} onClick={() => onNav('quiz')}>
-          <span style={{ width: 16, display: 'inline-block' }}>◇</span> General quizzes
-          <span className="nav-count">{counts.generalQuizzes}</span>
+          <span style={{ width: 16, display: 'inline-block' }}>◇</span> Quiz
         </button>
         <button className={classnames('nav-item', view === 'flashcards' && 'active')} onClick={() => onNav('flashcards')}>
           <span style={{ width: 16, display: 'inline-block' }}>♠</span> Flashcards

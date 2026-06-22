@@ -64,7 +64,7 @@ export const SEED_MODULES = [
 ];
 
 export const SEED_STATE = {
-  version: 3,
+  version: 4,
   themeKey: 'focus',
   dailyGoal: 1,
   weeklyGoalDays: 5,
@@ -76,16 +76,18 @@ export const SEED_STATE = {
     { id: 'gq-2', moduleIds: ['m-modale-werkwoorden', 'm-er-hier-daar'], score: 8, total: 12, date: '2026-06-09T18:30:00Z', note: '' },
   ],
   flashcardStats: {},
+  quizStats: {},
 };
 
 export function emptyState(themeKey = 'focus') {
   return {
-    version: 3, themeKey,
+    version: 4, themeKey,
     dailyGoal: 1, weeklyGoalDays: 5,
     streak: 0,
     weekDots: [false, false, false, false, false, false, false],
     modules: [],
     generalQuizzes: [],
     flashcardStats: {},
+    quizStats: {},
   };
 }
