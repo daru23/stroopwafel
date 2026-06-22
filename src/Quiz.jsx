@@ -149,15 +149,19 @@ export function Quiz({ stats, onResult, onResetStats }) {
 
           {mode === 'chapter' && (
             <div className="fc-theme-list">
-              {THEMES.map((t) => (
-                <button
-                  key={t.id}
-                  className={`fc-theme ${themeId === t.id ? 'on' : ''}`}
-                  onClick={() => setThemeId(t.id)}
-                >
-                  <div className="fc-theme-name">{t.label}</div>
-                  <div className="fc-theme-count">{t.cards.length} words</div>
-                </button>
+              {THEMES.map((t, i) => (
+                <React.Fragment key={t.id}>
+                  {(i === 0 || THEMES[i - 1].group !== t.group) && (
+                    <div className="fc-theme-group-label">{t.group === 'verbs' ? 'Verbs' : 'Vocabulary'}</div>
+                  )}
+                  <button
+                    className={`fc-theme ${themeId === t.id ? 'on' : ''}`}
+                    onClick={() => setThemeId(t.id)}
+                  >
+                    <div className="fc-theme-name">{t.label}</div>
+                    <div className="fc-theme-count">{t.cards.length} words</div>
+                  </button>
+                </React.Fragment>
               ))}
             </div>
           )}
@@ -265,11 +269,12 @@ function QuizSession({ deck, onResult, onFinish, onAbort }) {
       </div>
 
       <div className={classnames('quiz-card', submitted && (correct ? 'is-correct' : 'is-wrong'))}>
-        <div className="fc-side-label">Dutch</div>
+        <div className="fc-side-label">{card.prompt ? 'Infinitive' : 'Dutch'}</div>
         <div className="fc-word">
           {card.article && <span className="fc-article">{card.article}</span>}
           <span>{card.nl}</span>
         </div>
+        {card.prompt && <div className="fc-prompt">{card.prompt}</div>}
 
         <form className="quiz-form" onSubmit={onPrimary}>
           <input
@@ -278,7 +283,7 @@ function QuizSession({ deck, onResult, onFinish, onAbort }) {
             type="text"
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
-            placeholder="Type the English…"
+            placeholder={card.prompt ? 'Type the form…' : 'Type the English…'}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
@@ -294,7 +299,7 @@ function QuizSession({ deck, onResult, onFinish, onAbort }) {
               <div className="quiz-answer">
                 <span className="quiz-answer-label">Answer:</span> {card.en}
               </div>
-              {card.example && <div className="quiz-example">{card.example}</div>}
+              {(card.example || card.gloss) && <div className="quiz-example">{card.example || card.gloss}</div>}
               {!correct && (
                 <button type="button" className="btn btn-ghost btn-sm quiz-override" onClick={override}>
                   I was right — count it

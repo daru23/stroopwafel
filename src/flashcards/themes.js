@@ -1,6 +1,7 @@
 // Flashcard themes — sourced from "De Opmaat" (Beersmans & Tersteeg, 2020).
 // Each card has a stable id derived from theme + Dutch slug so user progress
 // survives edits to this file. Add new themes here.
+import { VERB_THEMES } from './verbs.js';
 
 export const THEMES = [
   {
@@ -1723,6 +1724,9 @@ export const THEMES = [
   },
 ];
 
+// Verb-conjugation themes live alongside the vocabulary themes (grouped 'verbs').
+THEMES.push(...VERB_THEMES);
+
 // Build a stable id from theme + slug of nl; freeze for the runtime.
 function slugify(s) {
   return s
@@ -1733,6 +1737,7 @@ function slugify(s) {
 }
 
 for (const theme of THEMES) {
+  theme.group = theme.group || 'vocab';
   for (const card of theme.cards) {
     card.id = `${theme.id}:${slugify(card.nl)}`;
   }

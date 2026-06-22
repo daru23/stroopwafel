@@ -146,15 +146,19 @@ export function Flashcards({ stats, onResult, onResetStats }) {
 
           {mode === 'chapter' && (
             <div className="fc-theme-list">
-              {THEMES.map((t) => (
-                <button
-                  key={t.id}
-                  className={`fc-theme ${themeId === t.id ? 'on' : ''}`}
-                  onClick={() => setThemeId(t.id)}
-                >
-                  <div className="fc-theme-name">{t.label}</div>
-                  <div className="fc-theme-count">{t.cards.length} cards</div>
-                </button>
+              {THEMES.map((t, i) => (
+                <React.Fragment key={t.id}>
+                  {(i === 0 || THEMES[i - 1].group !== t.group) && (
+                    <div className="fc-theme-group-label">{t.group === 'verbs' ? 'Verbs' : 'Vocabulary'}</div>
+                  )}
+                  <button
+                    className={`fc-theme ${themeId === t.id ? 'on' : ''}`}
+                    onClick={() => setThemeId(t.id)}
+                  >
+                    <div className="fc-theme-name">{t.label}</div>
+                    <div className="fc-theme-count">{t.cards.length} cards</div>
+                  </button>
+                </React.Fragment>
               ))}
             </div>
           )}
@@ -310,18 +314,19 @@ function SessionPlayer({ deck, onResult, onFinish, onAbort }) {
       >
         {!flipped ? (
           <>
-            <div className="fc-side-label">Dutch</div>
+            <div className="fc-side-label">{card.prompt ? 'Infinitive' : 'Dutch'}</div>
             <div className="fc-word">
               {card.article && <span className="fc-article">{card.article}</span>}
               <span>{card.nl}</span>
             </div>
+            {card.prompt && <div className="fc-prompt">{card.prompt}</div>}
             <div className="fc-hint">Tap or press Space to flip</div>
           </>
         ) : (
           <>
-            <div className="fc-side-label">English</div>
+            <div className="fc-side-label">{card.prompt ? 'Answer' : 'English'}</div>
             <div className="fc-word">{card.en}</div>
-            <div className="fc-hint fc-hint-swipe">{card.themeName} · swipe or tap below</div>
+            <div className="fc-hint fc-hint-swipe">{(card.gloss || card.themeName)} · swipe or tap below</div>
           </>
         )}
       </div>
