@@ -1,6 +1,6 @@
 // === Interactive typed quiz: type the English for each Dutch word ===
 import React from 'react';
-import { THEMES, ALL_CARDS, getThemeById } from './flashcards/themes.js';
+import { THEMES, ALL_CARDS, getThemeById, groupLabel } from './flashcards/themes.js';
 import { Empty, classnames } from './components.jsx';
 
 const SUBSET_PRESETS = [10, 20, 50];
@@ -152,7 +152,7 @@ export function Quiz({ stats, onResult, onResetStats }) {
               {THEMES.map((t, i) => (
                 <React.Fragment key={t.id}>
                   {(i === 0 || THEMES[i - 1].group !== t.group) && (
-                    <div className="fc-theme-group-label">{t.group === 'verbs' ? 'Verbs' : 'Vocabulary'}</div>
+                    <div className="fc-theme-group-label">{groupLabel(t.group)}</div>
                   )}
                   <button
                     className={`fc-theme ${themeId === t.id ? 'on' : ''}`}
@@ -269,8 +269,8 @@ function QuizSession({ deck, onResult, onFinish, onAbort }) {
       </div>
 
       <div className={classnames('quiz-card', submitted && (correct ? 'is-correct' : 'is-wrong'))}>
-        <div className="fc-side-label">{card.prompt ? 'Infinitive' : 'Dutch'}</div>
-        <div className="fc-word">
+        <div className="fc-side-label">{card.kind === 'sentence' ? 'Maak de zin' : (card.prompt ? 'Infinitive' : 'Dutch')}</div>
+        <div className={classnames('fc-word', card.kind === 'sentence' && 'fc-cue')}>
           {card.article && <span className="fc-article">{card.article}</span>}
           <span>{card.nl}</span>
         </div>
@@ -283,7 +283,7 @@ function QuizSession({ deck, onResult, onFinish, onAbort }) {
             type="text"
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
-            placeholder={card.prompt ? 'Type the form…' : 'Type the English…'}
+            placeholder={card.kind === 'sentence' ? 'Type the full sentence…' : (card.prompt ? 'Type the form…' : 'Type the English…')}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"

@@ -1,6 +1,6 @@
 // === Flashcards: Dutch → English practice with per-card stats ===
 import React from 'react';
-import { THEMES, ALL_CARDS, getThemeById } from './flashcards/themes.js';
+import { THEMES, ALL_CARDS, getThemeById, groupLabel } from './flashcards/themes.js';
 import { Empty, classnames } from './components.jsx';
 
 const SUBSET_PRESETS = [10, 20, 50];
@@ -149,7 +149,7 @@ export function Flashcards({ stats, onResult, onResetStats }) {
               {THEMES.map((t, i) => (
                 <React.Fragment key={t.id}>
                   {(i === 0 || THEMES[i - 1].group !== t.group) && (
-                    <div className="fc-theme-group-label">{t.group === 'verbs' ? 'Verbs' : 'Vocabulary'}</div>
+                    <div className="fc-theme-group-label">{groupLabel(t.group)}</div>
                   )}
                   <button
                     className={`fc-theme ${themeId === t.id ? 'on' : ''}`}
@@ -314,8 +314,8 @@ function SessionPlayer({ deck, onResult, onFinish, onAbort }) {
       >
         {!flipped ? (
           <>
-            <div className="fc-side-label">{card.prompt ? 'Infinitive' : 'Dutch'}</div>
-            <div className="fc-word">
+            <div className="fc-side-label">{card.kind === 'sentence' ? 'Maak de zin' : (card.prompt ? 'Infinitive' : 'Dutch')}</div>
+            <div className={classnames('fc-word', card.kind === 'sentence' && 'fc-cue')}>
               {card.article && <span className="fc-article">{card.article}</span>}
               <span>{card.nl}</span>
             </div>
@@ -325,7 +325,7 @@ function SessionPlayer({ deck, onResult, onFinish, onAbort }) {
         ) : (
           <>
             <div className="fc-side-label">{card.prompt ? 'Answer' : 'English'}</div>
-            <div className="fc-word">{card.en}</div>
+            <div className={classnames('fc-word', card.kind === 'sentence' && 'fc-cue')}>{card.en}</div>
             <div className="fc-hint fc-hint-swipe">{(card.gloss || card.themeName)} · swipe or tap below</div>
           </>
         )}

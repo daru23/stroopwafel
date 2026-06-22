@@ -1097,6 +1097,13 @@ input.field, select.field {
 }
 .fc-theme-group-label:first-child { padding-top: 0; }
 
+/* Sentence-drill cue (building blocks / the full sentence) — smaller than a word */
+.fc-cue {
+  font-size: clamp(18px, 4vw, 23px);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 /* Tense tag on verb cards */
 .fc-prompt {
   margin-top: 10px;

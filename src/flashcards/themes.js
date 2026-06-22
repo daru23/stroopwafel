@@ -2,6 +2,7 @@
 // Each card has a stable id derived from theme + Dutch slug so user progress
 // survives edits to this file. Add new themes here.
 import { VERB_THEMES } from './verbs.js';
+import { SENTENCE_THEMES } from './sentences.js';
 
 export const THEMES = [
   {
@@ -1724,8 +1725,9 @@ export const THEMES = [
   },
 ];
 
-// Verb-conjugation themes live alongside the vocabulary themes (grouped 'verbs').
-THEMES.push(...VERB_THEMES);
+// Verb-conjugation and sentence-drill themes live alongside the vocabulary
+// themes, in their own groups ('verbs', 'sentences').
+THEMES.push(...VERB_THEMES, ...SENTENCE_THEMES);
 
 // Build a stable id from theme + slug of nl; freeze for the runtime.
 function slugify(s) {
@@ -1753,3 +1755,7 @@ export const ALL_CARDS = THEMES.flatMap((t) =>
 export function getThemeById(id) {
   return THEMES.find((t) => t.id === id) || null;
 }
+
+// Display name for each theme group, used to section the theme picker.
+export const GROUP_LABELS = { vocab: 'Vocabulary', verbs: 'Verbs', sentences: 'Sentences' };
+export const groupLabel = (g) => GROUP_LABELS[g] || 'Vocabulary';
