@@ -1188,14 +1188,18 @@ input.field, select.field {
   cursor: pointer;
   box-shadow: 0 12px 32px -16px var(--shadow);
   user-select: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  touch-action: pan-y; /* let vertical scroll pass through; we handle horizontal swipe */
+  transition: transform 0.2s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 .fc-card:hover { box-shadow: 0 16px 40px -16px var(--shadow-strong); }
 .fc-card.flipped {
   background: var(--primary-soft);
   border-color: var(--primary);
-  cursor: default;
+  cursor: grab;
 }
+/* swipe-to-grade colour hints */
+.fc-card.swipe-right { border-color: var(--primary); background: var(--primary-soft); }
+.fc-card.swipe-left { border-color: var(--danger); background: var(--danger-soft); }
 .fc-side-label {
   font-size: 11px;
   font-weight: 600;
@@ -1285,3 +1289,112 @@ input.field, select.field {
 .fc-review-row:last-child { border-bottom: none; }
 .fc-review-nl { color: var(--ink); font-weight: 500; }
 .fc-review-en { color: var(--ink-soft); }
+
+/* === Bottom tab bar — hidden on desktop, shown at <=768px === */
+.bottom-nav { display: none; }
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+@media (max-width: 768px) {
+  /* --- Layout: single column, sidebar out, bottom nav in --- */
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 18px 16px calc(70px + env(safe-area-inset-bottom) + 16px); }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 95;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -4px 16px -12px var(--shadow-strong);
+  }
+  .bn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 9px 2px 8px;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font: inherit;
+    transition: color 0.12s ease;
+  }
+  .bn-item.active { color: var(--primary-ink); }
+  .bn-icon { font-size: 18px; line-height: 1; }
+  .bn-label { font-size: 10.5px; font-weight: 500; }
+
+  /* --- Settings: gear hidden, popover becomes a bottom sheet --- */
+  .settings-trigger { display: none; }
+  .settings-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 96;
+  }
+  .settings-pop {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: calc(70px + env(safe-area-inset-bottom));
+    width: auto;
+    max-height: 70vh;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
+    z-index: 97;
+    animation: sheet-up 0.2s ease;
+  }
+
+  /* --- Page header + actions stack --- */
+  .page-head { flex-direction: column; align-items: stretch; gap: 12px; }
+  .page-head h1 { font-size: 22px; }
+  .page-actions { flex-wrap: wrap; }
+  .page-actions .btn { flex: 1; }
+
+  /* --- Grids collapse --- */
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .module-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .dash-grid { grid-template-columns: 1fr; }
+
+  /* --- Toast clears the tab bar --- */
+  .app-toast {
+    bottom: calc(70px + env(safe-area-inset-bottom) + 14px);
+    left: 16px; right: 16px;
+    transform: none;
+    white-space: normal;
+  }
+
+  /* --- Modals fit the viewport --- */
+  .modal { width: calc(100vw - 28px); max-width: none; padding: 20px; }
+
+  /* --- Vocabulary table reflows to stacked rows --- */
+  .vocab-row.vocab-head { display: none; }
+  .vocab-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px 12px;
+    position: relative;
+  }
+  .vocab-row > * { padding: 0; }
+  .vocab-nl { font-weight: 600; padding-right: 28px; }
+  .vocab-del {
+    position: absolute;
+    top: 6px; right: 6px;
+    opacity: 0.5;
+    height: auto;
+    padding: 2px 8px !important;
+  }
+  .vocab-add { grid-template-columns: 1fr; }
+
+  /* --- Flashcards: fluid sizing for portrait --- */
+  .fc-setup { max-width: none; }
+  .fc-mode-row { grid-template-columns: 1fr; }
+  .fc-card { padding: 36px 20px; min-height: 220px; border-radius: 16px; }
+  .fc-word { font-size: clamp(24px, 7vw, 34px); }
+  .fc-action { max-width: none; }
+}

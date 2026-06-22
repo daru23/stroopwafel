@@ -4,8 +4,12 @@ import { classnames, Modal } from './components.jsx';
 import { THEMES } from './themes.js';
 import { validateImport, planMerge } from './shared/merge.js';
 
-export function SettingsMenu({ themeKey, onTheme, onReset, onClear, onExport, currentState, onApplyImport }) {
-  const [open, setOpen] = React.useState(false);
+export function SettingsMenu({ themeKey, onTheme, onReset, onClear, onExport, currentState, onApplyImport, open: openProp, onOpenChange }) {
+  const [openInternal, setOpenInternal] = React.useState(false);
+  // Controlled when `open`/`onOpenChange` are provided (e.g. the mobile Settings tab),
+  // otherwise self-managed via the floating gear.
+  const open = openProp !== undefined ? openProp : openInternal;
+  const setOpen = onOpenChange || setOpenInternal;
   const [importPreview, setImportPreview] = React.useState(null); // { summary, merged }
   const [importError, setImportError] = React.useState('');
   const fileRef = React.useRef(null);
@@ -13,7 +17,12 @@ export function SettingsMenu({ themeKey, onTheme, onReset, onClear, onExport, cu
 
   React.useEffect(() => {
     if (!open) return;
-    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onDoc = (e) => {
+      // Ignore the external togglers (gear, mobile Settings tab) so their own
+      // click handler does the toggle instead of close-then-reopen.
+      if (e.target.closest && e.target.closest('[data-settings-toggle]')) return;
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('mousedown', onDoc);
     window.addEventListener('keydown', onKey);
@@ -56,11 +65,13 @@ export function SettingsMenu({ themeKey, onTheme, onReset, onClear, onExport, cu
 
   return (
     <>
+      {open && <div className="settings-backdrop" onClick={() => setOpen(false)} />}
       <div className="settings" ref={ref}>
         <button
           className={classnames('settings-trigger', open && 'open')}
           title="Settings"
           aria-label="Settings"
+          data-settings-toggle
           onClick={() => setOpen((o) => !o)}
         >
           ⚙

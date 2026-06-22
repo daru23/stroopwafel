@@ -1,7 +1,7 @@
 // === Flashcards: Dutch → English practice with per-card stats ===
 import React from 'react';
 import { THEMES, ALL_CARDS, getThemeById } from './flashcards/themes.js';
-import { Empty } from './components.jsx';
+import { Empty, classnames } from './components.jsx';
 
 const SUBSET_PRESETS = [10, 20, 50];
 
@@ -214,12 +214,37 @@ export function Flashcards({ stats, onResult, onResetStats }) {
 }
 
 // --- Session player ---
+const SWIPE_THRESHOLD = 90;
+
 function SessionPlayer({ deck, onResult, onFinish, onAbort }) {
   const [index, setIndex] = React.useState(0);
   const [flipped, setFlipped] = React.useState(false);
+  const [dragX, setDragX] = React.useState(0);
+  const dragRef = React.useRef({ startX: 0, active: false, dx: 0 });
   const card = deck[index];
 
-  React.useEffect(() => { setFlipped(false); }, [index]);
+  React.useEffect(() => { setFlipped(false); setDragX(0); }, [index]);
+
+  // --- Swipe to grade (only once flipped) ---
+  function onPointerDown(e) {
+    if (!flipped) return;
+    dragRef.current = { startX: e.clientX, active: true, dx: 0 };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  }
+  function onPointerMove(e) {
+    if (!dragRef.current.active) return;
+    const dx = e.clientX - dragRef.current.startX;
+    dragRef.current.dx = dx;
+    setDragX(dx);
+  }
+  function onPointerUp() {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    const dx = dragRef.current.dx;
+    dragRef.current.dx = 0;
+    setDragX(0);
+    if (Math.abs(dx) > SWIPE_THRESHOLD) next(dx > 0); // right = got it, left = didn't know
+  }
 
   // Keyboard: Space to flip, 1 for got it, 2 for missed
   React.useEffect(() => {
@@ -268,8 +293,18 @@ function SessionPlayer({ deck, onResult, onFinish, onAbort }) {
       </div>
 
       <div
-        className={`fc-card ${flipped ? 'flipped' : ''}`}
+        className={classnames(
+          'fc-card',
+          flipped && 'flipped',
+          dragX > 40 && 'swipe-right',
+          dragX < -40 && 'swipe-left',
+        )}
         onClick={() => !flipped && setFlipped(true)}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={dragX ? { transform: `translateX(${dragX}px) rotate(${dragX * 0.03}deg)`, transition: 'none' } : undefined}
         role="button"
         tabIndex={0}
       >
@@ -280,13 +315,13 @@ function SessionPlayer({ deck, onResult, onFinish, onAbort }) {
               {card.article && <span className="fc-article">{card.article}</span>}
               <span>{card.nl}</span>
             </div>
-            <div className="fc-hint">Click or press Space to flip</div>
+            <div className="fc-hint">Tap or press Space to flip</div>
           </>
         ) : (
           <>
             <div className="fc-side-label">English</div>
             <div className="fc-word">{card.en}</div>
-            <div className="fc-hint">{card.themeName}</div>
+            <div className="fc-hint fc-hint-swipe">{card.themeName} · swipe or tap below</div>
           </>
         )}
       </div>

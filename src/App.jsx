@@ -7,6 +7,7 @@ import { ModuleDetail } from './ModuleDetail.jsx';
 import { QuizView } from './QuizView.jsx';
 import { Flashcards } from './Flashcards.jsx';
 import { SettingsMenu } from './Settings.jsx';
+import { BottomNav } from './BottomNav.jsx';
 import { applyTheme } from './themes.js';
 import { SEED_STATE, emptyState } from './seed.js';
 import { migrate } from './shared/migrate.js';
@@ -106,6 +107,7 @@ export default function App() {
   const [search, setSearch] = React.useState('');
   const [editorOpen, setEditorOpen] = React.useState(false);
   const [editorInitial, setEditorInitial] = React.useState(null);
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
 
   const revRef = React.useRef(null);
   const saveTimerRef = React.useRef(null);
@@ -500,6 +502,15 @@ export default function App() {
         onExport={exportData}
         currentState={state}
         onApplyImport={(merged) => setState(merged)}
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+      />
+
+      <BottomNav
+        view={view}
+        onNav={(v) => { setView(v); setSearch(''); setSettingsOpen(false); }}
+        settingsOpen={settingsOpen}
+        onToggleSettings={() => setSettingsOpen((o) => !o)}
       />
     </div>
   );
