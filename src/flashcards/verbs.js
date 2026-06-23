@@ -104,6 +104,16 @@ const VERBS = [
   { inf: 'reizen', en: 'to travel', present: 'reist', imp: 'reisde / reisden', part: 'gereisd', aux: 'hebben/zijn' },
 ];
 
+// Regular (weak) verbs: imperfectum = stem + -te/-de(n) AND participle =
+// ge- + stem + -t/-d. Every other verb is irregular (strong or irregular) and
+// must be memorised. The classification is shown on every verb card so it's
+// easy to remember which verbs are irregular.
+const REGULAR = new Set([
+  'werken', 'maken', 'wonen', 'leren', 'spelen', 'praten', 'luisteren',
+  'wachten', 'betalen', 'bestellen', 'koken', 'gebruiken', 'kennen', 'reizen',
+]);
+const isRegular = (v) => REGULAR.has(v.inf);
+
 // Present, imperfectum and participle themes all map over the same VERBS list,
 // so they cover the identical verb set.
 export const VERB_THEMES = [
@@ -112,21 +122,30 @@ export const VERB_THEMES = [
     name: 'Werkwoorden — Tegenwoordige tijd',
     label: 'Verbs · Tegenwoordige tijd (present)',
     group: 'verbs',
-    cards: VERBS.map((v) => ({ nl: v.inf, en: v.present, prompt: 'present · hij/zij/het', gloss: v.en })),
+    cards: VERBS.map((v) => ({
+      nl: v.inf, en: v.present, prompt: 'present · hij/zij/het',
+      gloss: `${isRegular(v) ? 'Regular' : 'Irregular'} verb · ${v.en}`,
+    })),
   },
   {
     id: 'v-imp',
     name: 'Werkwoorden — Imperfectum',
     label: 'Verbs · Imperfectum (simple past)',
     group: 'verbs',
-    cards: VERBS.map((v) => ({ nl: v.inf, en: v.imp, prompt: 'imperfectum', gloss: v.en })),
+    cards: VERBS.map((v) => ({
+      nl: v.inf, en: v.imp, prompt: 'imperfectum',
+      gloss: `${isRegular(v) ? 'Regular (weak) — stem + -te/-de' : 'Irregular — memorise the form'} · ${v.en}`,
+    })),
   },
   {
     id: 'v-part',
     name: 'Werkwoorden — Voltooid deelwoord',
     label: 'Verbs · Voltooid deelwoord (participle)',
     group: 'verbs',
-    cards: VERBS.map((v) => ({ nl: v.inf, en: v.part, prompt: 'voltooid deelwoord', gloss: `${v.aux} · ${v.en}` })),
+    cards: VERBS.map((v) => ({
+      nl: v.inf, en: v.part, prompt: 'voltooid deelwoord',
+      gloss: `${isRegular(v) ? 'Regular — ge- + stem + -t/-d' : 'Irregular'} · ${v.aux} · ${v.en}`,
+    })),
   },
 ];
 
